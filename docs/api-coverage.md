@@ -109,6 +109,15 @@ Status: :white_check_mark: implemented | :construction: planned | :no_entry_sign
 | Task types     | `cup task-types`        | :white_check_mark: |
 | Task templates | `cup templates`         | :white_check_mark: |
 
+## Lists
+
+| Feature                | Command                   | Status             |
+| ---------------------- | ------------------------- | ------------------ |
+| Create list in folder  | `cup list-create --folder`| :white_check_mark: |
+| Create list in space   | `cup list-create --space` | :white_check_mark: |
+| Update list            | `cup list-update <id>`    | :white_check_mark: |
+| Delete list            | `cup list-delete <id>`    | :white_check_mark: |
+
 ## Goals & Key Results
 
 | Feature           | Command                              | Status             |
@@ -161,7 +170,7 @@ Status: :white_check_mark: implemented | :construction: planned | :no_entry_sign
 | Audit logs              | Enterprise admin.                                                           |
 | User/group management   | Too destructive for a CLI - removing someone from a workspace is permanent. |
 | View CRUD               | Views are visual layouts. Configure them in the UI.                         |
-| List/Folder/Space CRUD  | Structural changes. Set these up in the UI.                                 |
+| Folder/Space CRUD       | Structural changes above the list level are still intentionally out of scope. |
 | View/List/Chat comments | API only supports task-level comments.                                      |
 | User Groups             | Enterprise admin feature.                                                   |
 | Shared Hierarchy        | Enterprise admin feature.                                                   |

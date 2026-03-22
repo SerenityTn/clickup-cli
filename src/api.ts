@@ -79,6 +79,29 @@ export interface CreateTaskOptions {
   custom_item_id?: number
 }
 
+export interface CreateListOptions {
+  name: string
+  content?: string
+  markdown_content?: string
+  status?: string
+  priority?: Priority | null
+  assignee?: number
+  due_date?: number
+  due_date_time?: boolean
+}
+
+export interface UpdateListOptions {
+  name?: string
+  content?: string
+  markdown_content?: string
+  status?: string
+  unset_status?: boolean
+  priority?: Priority | null
+  assignee?: number
+  due_date?: number
+  due_date_time?: boolean
+}
+
 interface Team {
   id: string
   name: string
@@ -507,6 +530,34 @@ export class ClickUpClient {
 
   async getListWithStatuses(listId: string): Promise<ListWithStatuses> {
     return this.request<ListWithStatuses>(`/list/${listId}`)
+  }
+
+  async createList(folderId: string, options: CreateListOptions): Promise<ListWithStatuses> {
+    return this.request<ListWithStatuses>(`/folder/${folderId}/list`, {
+      method: 'POST',
+      body: JSON.stringify(options),
+    })
+  }
+
+  async createFolderlessList(
+    spaceId: string,
+    options: CreateListOptions,
+  ): Promise<ListWithStatuses> {
+    return this.request<ListWithStatuses>(`/space/${spaceId}/list`, {
+      method: 'POST',
+      body: JSON.stringify(options),
+    })
+  }
+
+  async updateList(listId: string, options: UpdateListOptions): Promise<ListWithStatuses> {
+    return this.request<ListWithStatuses>(`/list/${listId}`, {
+      method: 'PUT',
+      body: JSON.stringify(options),
+    })
+  }
+
+  async deleteList(listId: string): Promise<void> {
+    await this.request<Record<string, never>>(`/list/${listId}`, { method: 'DELETE' })
   }
 
   async getSpaces(teamId: string): Promise<Space[]> {

@@ -18,6 +18,7 @@ import { fetchSubtasks } from './commands/subtasks.js'
 import { postComment } from './commands/comment.js'
 import { fetchComments, printComments } from './commands/comments.js'
 import { fetchLists, printLists } from './commands/lists.js'
+import { createListCommand, updateListCommand, deleteListCommand } from './commands/list-crud.js'
 import { formatTaskDetail } from './interactive.js'
 import { isTTY, shouldOutputJson } from './output.js'
 import {
@@ -508,6 +509,98 @@ export function buildProgram(programName = basename(process.argv[1] ?? 'cup')): 
         const config = loadConfig(getProfileName())
         const lists = await fetchLists(config, spaceId, { name: opts.name })
         printLists(lists, opts.json ?? false)
+      }),
+    )
+
+  program
+    .command('list-create')
+    .description('Create a list in a folder or directly in a space')
+    .requiredOption('-n, --name <name>', 'List name')
+    .option('--space <spaceId>', 'Create a folderless list directly in this space')
+    .option('--folder <folderId>', 'Create the list inside this folder')
+    .option('-d, --description <text>', 'List description (markdown supported)')
+    .option('-s, --status <color>', 'List color/status value')
+    .option('--priority <level>', 'Priority: urgent, high, normal, low (or 1-4)')
+    .option('--due-date <date>', 'Due date (YYYY-MM-DD)')
+    .option('--assignee <userId>', 'Assignee user ID or "me"')
+    .option('--json', 'Force JSON output even in terminal')
+    .action(
+      wrapAction(
+        async (
+          opts: {
+            name: string
+            space?: string
+            folder?: string
+            description?: string
+            status?: string
+            priority?: string
+            dueDate?: string
+            assignee?: string
+            json?: boolean
+          },
+        ) => {
+          const config = loadConfig(getProfileName())
+          const result = await createListCommand(config, opts)
+          if (shouldOutputJson(opts.json ?? false)) {
+            console.log(JSON.stringify(result, null, 2))
+          } else {
+            console.log(`Created list ${result.id}: "${result.name}"`)
+          }
+        },
+      ),
+    )
+
+  program
+    .command('list-update <listId>')
+    .description('Update a list')
+    .option('-n, --name <text>', 'New list name')
+    .option('-d, --description <text>', 'New description (markdown supported)')
+    .option('-s, --status <color>', 'Set list color/status value')
+    .option('--unset-status', 'Remove the list color/status value')
+    .option('--priority <level>', 'Priority: urgent, high, normal, low (or 1-4)')
+    .option('--due-date <date>', 'Due date (YYYY-MM-DD)')
+    .option('--assignee <userId>', 'Assignee user ID or "me"')
+    .option('--json', 'Force JSON output even in terminal')
+    .action(
+      wrapAction(
+        async (
+          listId: string,
+          opts: {
+            name?: string
+            description?: string
+            status?: string
+            unsetStatus?: boolean
+            priority?: string
+            dueDate?: string
+            assignee?: string
+            json?: boolean
+          },
+        ) => {
+          const config = loadConfig(getProfileName())
+          const result = await updateListCommand(config, listId, opts)
+          if (shouldOutputJson(opts.json ?? false)) {
+            console.log(JSON.stringify(result, null, 2))
+          } else {
+            console.log(`Updated list ${result.id}: "${result.name}"`)
+          }
+        },
+      ),
+    )
+
+  program
+    .command('list-delete <listId>')
+    .description('Delete a list (requires confirmation)')
+    .option('--confirm', 'Skip confirmation prompt (required in non-interactive mode)')
+    .option('--json', 'Force JSON output even in terminal')
+    .action(
+      wrapAction(async (listId: string, opts: { confirm?: boolean; json?: boolean }) => {
+        const config = loadConfig(getProfileName())
+        const result = await deleteListCommand(config, listId, opts)
+        if (shouldOutputJson(opts.json ?? false)) {
+          console.log(JSON.stringify(result, null, 2))
+        } else {
+          console.log(`Deleted list ${result.listId}`)
+        }
       }),
     )
 

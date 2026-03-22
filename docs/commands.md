@@ -37,6 +37,9 @@ Custom ID resolution uses the `teamId` from your config, which is required (`cup
 | `cup replies <commentId>`               | List threaded replies on a comment    |
 | `cup activity <taskId>`                 | Task details + comment history        |
 | `cup lists <spaceId>`                   | List all lists in a space             |
+| `cup list-create`                       | Create a list                         |
+| `cup list-update <listId>`              | Update a list                         |
+| `cup list-delete <listId>`              | Delete a list                         |
 | `cup spaces`                            | List spaces in workspace              |
 | `cup inbox`                             | Recently updated tasks assigned to me |
 | `cup assigned`                          | My tasks grouped by pipeline stage    |
